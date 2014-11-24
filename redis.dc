@@ -1,0 +1,19 @@
+var redis = require("redis").createClient()
+
+function main() {
+	redis.set.('a', 555)
+	redis.get.('a' :: e, d)
+	console.log(d)
+	if (d == '555') {
+		redis.set.('b', parseInt(d) + 1)
+		var d = redis.get.('b' :: 2)
+		console.log(d)
+		redis.del.('a')
+		redis.del.('b')
+		redis.quit()
+	} else {
+		redis.quit()
+	}
+}
+
+main()

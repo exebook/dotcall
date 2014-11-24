@@ -1,0 +1,15 @@
+function foo(f) {
+	setTimeout(function() { f(true) }, 200)
+}
+
+function bar(x, f) {
+	setTimeout(function() { f(500 + x) }, 200)
+}
+
+ function main() {
+	if (foo.()) {
+		var d = bar.(55)
+		console.log(d)// outputs 555
+	}
+}
+main()
