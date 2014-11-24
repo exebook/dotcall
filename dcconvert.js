@@ -221,9 +221,9 @@ function replaceArguments(source, calls) {
 	
 	it contains 4 important positions:
 	
-		myfunc.(123, 45)
-	^  ^     ^        ^  
-	A  B     C        D
+           myfunc.(123, 45)
+^          ^     ^        ^  
+A          B     C        D
 	
 	A - "async" or "CR", begining of line, place where we insert the 
 			actual async call statement
