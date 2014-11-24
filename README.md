@@ -38,6 +38,16 @@ console.log(redis.get.('a' :: 2))
 ```
 the above outputs `12345`, because Redis function `get(err, data)` uses `data` as a second parameter
 
+###install with npm
+```javascript
+npm install dotcall
+```
+
+###install with git
+```javascript
+git clone https://github.com/exebook/dotcall.git
+```
+
 ### require() syntax:
 ```
 require('dotcall')
