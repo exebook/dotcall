@@ -2,7 +2,9 @@ var fs = require('fs')
 var dcconvert = require('./dcconvert')
 
 function compile(s) {
-	return dcconvert.dotcallConvert(s)
+	s = dcconvert.dotcallConvert(s)
+	fs.writeFileSync('out.js', s)
+	return s
 }
 
 loadFile = function(module, filename) {
