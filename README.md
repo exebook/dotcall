@@ -43,6 +43,20 @@ function main() {
 }
 ```
 
+the above loop is translated to this:
+
+```javascript
+function main() {
+   var i = 0; function DOTCALL2(DOTCALL3) {
+        if ((i < 5) == false) { DOTCALL3(); return }
+        bar('X', function (DOTCALL5,DOTCALL6) { DOTCALL6
+     i++; setImmediate(DOTCALL2, DOTCALL3)
+   }) }
+   DOTCALL2(function() {
+   console.log('AFTER')
+})}
+
+```
 In case your callback uses more than one parameter, there is an extended syntax, called **double colon** syntax.
 ```javascript
 redis.set.('a', 12345)
