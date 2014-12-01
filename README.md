@@ -72,6 +72,11 @@ console.log(redis.get.('a' :: 2))
 ```
 the above outputs `12345`, because Redis function `get(err, data)` uses `data` as a second parameter
 
+###Usage tips
+ - beware of using `this`, because it will be bound to silently created functions, use known patterns like `var me = this` and then use `me` instead.
+ - remember that new visibility block is created after each `.(`
+ - `return` can be used to abort your block of functions, but remember that although the execution will not happen after the line with `return`, the `return` is actually rather just an exit, returning values from nested hell entries is way too tricky.
+
 ###install with npm
 ```javascript
 npm install dotcall
@@ -143,6 +148,7 @@ var dotcall = require('dotcall')
 dotcall.handleExt('.js')
 require('./sample.js') // now .js is handled with dotcall, beware
 ```
+
 
 ###files
  - .README.md - this readme
