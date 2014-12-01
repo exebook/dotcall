@@ -23,6 +23,26 @@ f(function(DOTCALL1) { var a = DOTCALL1
 })
 ```
 
+###New: loops with for.() and while.()
+
+You can use `for.()` and `while.()` syntax. `break` statement is supported. Nesting loops are not tested, they will probably not work. You can use very long loops, there will be no stack overflow, because async calls are made with `setImmediate`.
+
+```javascript
+function bar(s,f) {
+	setTimeout(function() {
+		console.log('bar'+s)
+		f()
+	}, 200)
+}
+
+function main() {
+	for.(var i = 0; i < 5; i++) {
+		bar.('X'::2)
+	}
+	console.log('AFTER')
+}
+```
+
 In case your callback uses more than one parameter, there is an extended syntax, called **double colon** syntax.
 ```javascript
 redis.set.('a', 12345)
