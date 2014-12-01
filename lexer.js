@@ -75,11 +75,22 @@ function mainLoop(s) {
 			if (b < 0) b = e
 			O = {type:'rem', s:cut()}
 		} else {
-			var b = checkSym(s, i)
-			if (b > i) O = {type:'sym', s:cut()}
-			else {
-				O = {type: 'tok', s:s[i++]}
-				console.log('UNRECOGNIZED TOKEN:', O.s)
+			var p = R[R.length-1]
+			if (p.type == 'space') p = R[R.length-2]
+			if (ch=='/' && p.type != 'num' && p.type != 'id'&& p.s != ')') {
+				b=i; while (++b < e) {
+					if (s[b] == '\\') b++
+					else if (s[b] == '/') break
+				}
+				b++
+				O = {type:'regex', s:cut()}
+			} else {
+				var b = checkSym(s, i)
+				if (b > i) O = {type:'sym', s:cut()}
+				else {
+					O = {type: 'tok', s:s[i++]}
+					console.log('UNRECOGNIZED TOKEN:', O.s)
+				}
 			}
 		}
 		R.push(O)
