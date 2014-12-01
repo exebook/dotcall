@@ -1,32 +1,20 @@
 var redis = require("redis").createClient()
 
-	var i = 0
-	function for1() {
-		if ((i < 5) == false) return
-		redis.incr('x', function (DOTCALL2) { DOTCALL2
-			redis.get('x', function (DOTCALL3,DOTCALL4) { 
-				var x = DOTCALL4
-				console.log(x)
-				for1()
-			})
-		})
-	}
-
 function main() {
-	redis.set.('x', 1)
-	for .(var i = 0; i < 5; i++) {
-		redis.incr.('x')
-		var x = redis.get.('x'::2)
+	while.((1+2)==(2+1)) {//var i = 0; i < 5; i++) {
+		redis.incr('x')
+		var x = redis.get.('x' :: 2)
 		console.log(x)
+		if (parseInt(x) == 8) break
 	}
+	redis.set.('x', 1)
 	redis.del.('x')
 	redis.set.('a', 555)
 	redis.get.('a' :: e, d)
 	console.log(d)
 	if (d == '555') {
 		redis.set.('b', parseInt(d) + 1)
-		var d = redis.get.('b' :: 2)
-		console.log(d)
+		console.log(redis.get.('b' :: 2))
 		redis.del.('a')
 		redis.del.('b')
 		redis.quit()
