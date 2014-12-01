@@ -76,6 +76,8 @@ the above outputs `12345`, because Redis function `get(err, data)` uses `data` a
  - beware of using `this`, because it will be bound to silently created functions, use known patterns like `var me = this` and then use `me` instead.
  - remember that new visibility block is created after each `.(`
  - `return` can be used to abort your block of functions, but remember that although the execution will not happen after the line with `return`, the `return` is actually rather just an exit, returning values from nested hell entries is way too tricky.
+ - do not be afraid of strange error messages returned by Node.js if you made a typo. They will not necessarily point you at the line where the typo was just made. You will need to understand what's going on wrong.
+ - if you want to see the intermediate output either use node+chrome debugger tools or enable saving the intermediate result to a file in `dotcall.js` manually
 
 ###install with npm
 ```javascript
@@ -149,6 +151,8 @@ dotcall.handleExt('.js')
 require('./sample.js') // now .js is handled with dotcall, beware
 ```
 
+###implementation details
+**dotcall** does not use any established lexers or parsers, instead it has a very simple lexer, and then does some logic with the array of returned tokens.
 
 ###files
  - .README.md - this readme
