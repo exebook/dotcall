@@ -208,7 +208,7 @@ function findDotCalls(A, f) {
 
 function findColon(A, find, replace) {
 	for (var i = 0; i < A.length; i++) {
-		if (A[i].s == find && (i > 0 && (A[i-1].type != 'id'&&A[i-1].type != 'string')) || i == 0) {
+		if (A[i].s == find && ((i > 0 && (A[i-1].type != 'id'&&A[i-1].type != 'string')) || i == 0)) {
 			A[i].s = replace+' '
 		}
 	}

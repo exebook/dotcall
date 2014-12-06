@@ -1,6 +1,6 @@
-var redis = require("redis").createClient()
+ var redis = require("redis").createClient()
 
-: main() {
+function main() {
 	while.((1+2)==(2+1)) {//var i = 0; i < 5; i++) {
 		redis.incr('x')
 		var x = redis.get.('x' :: 2)
