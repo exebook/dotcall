@@ -20,6 +20,7 @@ if (require.extensions) {
    require.extensions['.dc'] = loadFile
 }
 
+module.exports.convert = dcconvert.dotcallConvert
 module.exports.handleExt = function(ext) {
 	if (require.extensions) {
 	   require.extensions[ext] = loadFile
