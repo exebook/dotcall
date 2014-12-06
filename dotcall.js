@@ -4,7 +4,7 @@ var dcconvert = require('./convert')
 function compile(s) {
 	s = dcconvert.dotcallConvert(s)
 //	process.exit()
-	fs.writeFileSync('out.tmp', s)
+//	fs.writeFileSync('out.tmp', s)
 	log = console.log
 	return s
 }
