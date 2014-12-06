@@ -163,3 +163,6 @@ require('./sample.js') // now .js is handled with dotcall, beware
  - .call.js - console node wrapper
  - testapp.js - example of require('dotcall')
  
+ ##further reading
+ 
+ https://bjouhier.wordpress.com/2012/03/11/fibers-and-threads-in-node-js-what-for/

@@ -1,6 +1,6 @@
 module.exports.dotcallConvert = dotcallConvert
-
-var PREFIX = 'DOTCALL', callNumber = 1, lex = require('./lexer')
+module.exports.dotcallConvert = dotcallConvert
+var PREFIX = 'DOTCALL', callNumber = 1, lex = require('./lexer.js')
 function getId() {
 	callNumber++
 	return ''+PREFIX+callNumber
@@ -8,6 +8,8 @@ function getId() {
 
 function dotcallConvert(s) {
 	var R = lex.lex(s)
+	findEachs(R, handleEach)
+	findColon(R, ':', 'function')
 	findDotCalls(R, handleCall)
 	return lex.join(R,true)
 }
@@ -52,8 +54,64 @@ function handleWhile(A, i) {
 	handleFor(A, i)
 }
 
+function handleEach1(A, i) {
+	var e = A.length, fun = 0, a = i
+	A[i].s = 'for'
+	while (i < e && A[i].s != '(') i++, console.log('scan');
+	a = i+1
+	while (i < e) {
+		var c = A[i]
+		if (c.s == ')') if (fun > 1) fun--; else break
+		if (c.s == '(') fun++
+		i++
+	}
+	var args = lex.join(A.slice(a, i)).split(',')
+	args[0] = trimStr(args[0]), args[1] = trimStr(args[1])
+	console.log(args)
+	for (var x = a; x < i; x++) A[x].s = ''
+	A[a-1].s = '(var '+args[0]+' = 0; '+args[0]+' < '+args[1]+'.length; '+args[0]+'++'
+}
+
+Object.defineProperty(Array.prototype, 'last', {
+	get: function(){ return this[this.length - 1] }
+})
+
+function handleEach(A, i) {
+	function getNameRight() {
+		var e = A.length, fun = 0, arr = 0, R = []
+		while (i < e) {
+			var c = A[i]
+			var none = false
+			if (fun > 0) {
+				if (c.s == ')') fun--; else if (c.s == '(') fun++
+			}
+			else if (arr > 0) {
+				if (c.s == ']') arr--; else if (c.s == '[') arr++
+			}
+			else if (c.s == '(') fun++
+			else if (c.s == '[') arr++
+			else if (c.s == '.') ;
+			else if (c.type == 'id') {
+				if (R.last && R.last.type == 'id') break
+			}
+			else if (c.type == 'space') ;
+			else none = true
+			if (!none && c.type != 'space' && c.type != 'line') R.push(c)
+			if (none) break
+			i++
+		}
+		return lex.join(R)
+	}
+	var a = i
+	i++
+	var counter = getNameRight()
+	var array = getNameRight()
+	for (var x = a; x < i; x++) A[x].s = ''
+	A[a].s = 'for(var '+counter+' = 0; '+counter+' < '+array+'.length; '+counter+'++)'
+}
+
 function handleCall(A, i) {
-	var name = getName(A, i - 1)
+	var name = getNameLeft(A, i - 1)
 	var nameStr = lex.join(A.slice(name.a, name.b + 1))
 	if (nameStr == 'for') {	handleFor(A, i); return	}
 	if (nameStr == 'while') { handleWhile(A, i); return	}
@@ -61,7 +119,7 @@ function handleCall(A, i) {
 	var args = getArgs(A, i + 1)
 	var end = getEnd(A, i)
 	var comma = ''; if (args.txt!='') comma = ', '
-	A[line].s = A[line].s+''+nameStr+'('+args.txt+comma+'function ('+args.C.join(',')+') { ' 
+	A[line].s = A[line].s+''+nameStr+'('+args.txt+comma+'function ('+args.C.join(',')+') { '
 	for (var i = name.a; i < args.b + 2; i++) A[i].s = ''
 	A[name.a].s = args.N+''
 	if (!A[end].add) A[end].add = []
@@ -77,7 +135,7 @@ function getLine(A, i) {
 	}
 }
 
-function getName(A, i) {
+function getNameLeft(A, i) {
 	var fun = 0, arr = 0, b = i
 	while (i > 0) {
 		var c = A[i]
@@ -147,3 +205,18 @@ function findDotCalls(A, f) {
 		if (A[i].add) A[i].s = A[i].add.join(' ') +' '+ A[i].s
 	}
 }
+
+function findColon(A, find, replace) {
+	for (var i = 0; i < A.length; i++) {
+		if (A[i].s == find && (i > 0 && (A[i-1].type != 'id'&&A[i-1].type != 'string')) || i == 0) {
+			A[i].s = replace+' '
+		}
+	}
+}
+
+function findEachs(A, f) {
+	for (var i = 0; i < A.length; i++) {
+		if (A[i].s == 'each') f(A, i)
+	}
+}
+

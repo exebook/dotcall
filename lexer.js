@@ -7,12 +7,12 @@ var symLookupTable
 
 function isCharNum(c) { return (c >= '0' && c <= '9') }
 
-function isCharAlpha(c) { 
+function isCharAlpha(c) {
 	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'
 }
 
 function buildSymLookupTree() {
-	var syms = ':: ( ) [ ] { } .( , ; . - + * / % ~ | ++ -- != || && == === >= <= += -= *= /= %= >> << >>= <<= >>> <<< >>>= <<<='
+	var syms = ': :: ( ) [ ] { } .( , ; . - + * / % ~ | ++ -- != || && == === >= <= += -= *= /= %= >> << >>= <<= >>> <<< >>>= <<<='
 	var L = syms.split(' '), T = {}
 	L.forEach(function(x) {
 		var Z = T
@@ -76,7 +76,7 @@ function mainLoop(s) {
 			O = {type:'rem', s:cut()}
 		} else {
 			var p = R[R.length-1]
-			if (p.type == 'space') p = R[R.length-2]
+			if (p  && p.type == 'space') p = R[R.length-2]
 			if (ch=='/' && p.type != 'num' && p.type != 'id'&& p.s != ')') {
 				b=i; while (++b < e) {
 					if (s[b] == '\\') b++

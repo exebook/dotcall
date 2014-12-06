@@ -1,15 +1,20 @@
-function foo(f) {
-	setTimeout(function() { f(true) }, 200)
+: foo(f) {
+	setTimeout(:() { f(true) }, 200)
 }
 
-function bar(x, f) {
-	setTimeout(function() { f(500 + x) }, 200)
-}
+: bar(x, f) { setTimeout(:() { f(500 + x) }, 200) }
 
- function main() {
+: main() {
 	if (foo.()) {
 		var d = bar.(55)
-		console.log(d)// outputs 555
+		log(d)// outputs 555
 	}
 }
 main()
+
+A = [1,2,3]
+each i A log(A[i])
+//A.forEach(:i log(i); )
+
+//if (x) { a = 0; break }
+//if (x) a = 0^

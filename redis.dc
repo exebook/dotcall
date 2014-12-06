@@ -1,20 +1,20 @@
 var redis = require("redis").createClient()
 
-function main() {
+: main() {
 	while.((1+2)==(2+1)) {//var i = 0; i < 5; i++) {
 		redis.incr('x')
 		var x = redis.get.('x' :: 2)
-		console.log(x)
+		log(x)
 		if (parseInt(x) == 8) break
 	}
 	redis.set.('x', 1)
 	redis.del.('x')
 	redis.set.('a', 555)
 	redis.get.('a' :: e, d)
-	console.log(d)
+	log(d)
 	if (d == '555') {
 		redis.set.('b', parseInt(d) + 1)
-		console.log(redis.get.('b' :: 2))
+		log(redis.get.('b' :: 2))
 		redis.del.('a')
 		redis.del.('b')
 		redis.quit()

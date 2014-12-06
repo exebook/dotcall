@@ -3,7 +3,9 @@ var dcconvert = require('./convert')
 
 function compile(s) {
 	s = dcconvert.dotcallConvert(s)
-	fs.writeFileSync('out.js', s)
+//	process.exit()
+	fs.writeFileSync('out.tmp', s)
+	log = console.log
 	return s
 }
 
@@ -17,7 +19,7 @@ loadFile = function(module, filename) {
 if (require.extensions) {
    require.extensions['.dc'] = loadFile
 }
- 
+
 module.exports.handleExt = function(ext) {
 	if (require.extensions) {
 	   require.extensions[ext] = loadFile
