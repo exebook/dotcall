@@ -1,6 +1,6 @@
 {
   "name": "dotcall",
-  "version": "0.2.3",
+  "version": "0.2.16",
   "description": "callback hell remedy, syntax sugar",
   "main": "dotcall.js",
   "scripts": {

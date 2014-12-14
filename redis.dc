@@ -1,25 +1,28 @@
- var redis = require("redis").createClient()
+∇ ρ = require("redis").createClient()
 
-function main() {
-	while.((1+2)==(2+1)) {//var i = 0; i < 5; i++) {
-		redis.incr('x')
-		var x = redis.get.('x' :: 2)
-		log(x)
-		if (parseInt(x) == 8) break
+➮ main() {
+	ρ.del.('x', 1)
+	⧖.((1+2)==(2+1)) {//∇ i ⊜; i < 5; i++) {
+		ρ.incr('x')
+		∇ x = ρ.get.('x' :: 2)
+		ロ x
+		⌥ (parseInt(x) == 8) @
 	}
-	redis.set.('x', 1)
-	redis.del.('x')
-	redis.set.('a', 555)
-	redis.get.('a' :: e, d)
-	log(d)
-	if (d == '555') {
-		redis.set.('b', parseInt(d) + 1)
-		log(redis.get.('b' :: 2))
-		redis.del.('a')
-		redis.del.('b')
-		redis.quit()
-	} else {
-		redis.quit()
+	∇ ω = 123
+	ロ ω
+	ρ.set.('x', 1)
+	ρ.del.('x')
+	ρ.set.('a', 555)
+	ρ.get.('a' :: e, d)
+	ロ d
+	⌥(d == '555') {
+		ρ.set.('b', parseInt(d) + 1)
+		//ρ.get.('b' :: 2)
+		ρ.del.('a')
+		ρ.del.('b')
+		ρ.quit()
+	} ⎇ {
+		ρ.quit()
 	}
 }
 

@@ -1,2 +1,0 @@
-handleExt('js')
-require('./www.lib.js')
