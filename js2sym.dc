@@ -8,7 +8,7 @@
 		findLog(R)
 		findEach(R)
 		findIndex(R)
-
+//todo: remove () if empty
 		longReplace(R, '⌶', ['.','split'])
 		longReplace(R, '⫴', ['.','join'])
 		longReplace(R, '⋃', ['.','slice'])
@@ -24,6 +24,8 @@
 		longReplace(R, '≂', ['.','toString','(',')'])
 		longReplace(R, '≀', ['.','indexOf'])
 		simpleReplace(R, ' ⦙', ';')
+		simpleReplace(R, '☛', 'with')
+		
 		simpleReplace(R, '★', 'parseInt')
 		longReplace(R, '⬠', ['Math','.','round'])
 		longReplace(R, '⍽', ['Math','.','floor'])
@@ -39,7 +41,10 @@
 		simpleReplace(R, '⏀', 'delete')
 		//
 		longReplace(R, '⊜', ['=','0'])
+		longReplace(R, '⥹', ['else','if'])
 		simpleReplace(R, '⌥', 'if')
+		simpleReplace(R, '⎇', 'else')
+		
 		longReplace(R, '∞', ['while','(','true',')'])
 		longReplace(R, '∞', ['for','(',';',';',')'])
 		simpleReplace(R, '⧗', 'for')
@@ -56,7 +61,6 @@
 		simpleReplace(R, '≣', 'require')
 		simpleReplace(R, '⌚', 'setInterval')
 		simpleReplace(R, '⌛', 'setTimeout')
-		simpleReplace(R, '⎇', 'else')
 		longReplace(R, ' ↥', ['.','length'])
 		simpleReplace(R, '∅ '[0], 'undefined')
 		simpleReplace(R, '"∅"', '"undefined"')
@@ -66,7 +70,7 @@
 		simpleReplace(R, '@', 'break')
 		∇ s = lex.join(R, ⦿)
 		process.stdout.write(s)
-	} ⎇ ロ 'err'
+	} ⎇ ロ 'no input file'
 }
 
 ➮ findIndex ρ {
@@ -176,22 +180,32 @@
 
 ➮ findFunctions R {
 	//TODO: remove ➮, think about teetdb.js
+	//TODO: remove(), but not if 'a''b''c' found inbody
 	i ⬌ R ⌥(R[i].s ≟ 'function' || R[i].s ≟ '➮') {
 		Rⁱ.s = '➮'
 		∇ a = i
 		a = next(R, a)
-		⌥ (Rᵃ.type ≠ 'id') ♻ ∇f = Rᵃ.s ⦙ a = next(R, a)
-		⌥ (Rᵃ.s ≟ '(') {
-			∇ id = [], ix = [], z = a
-			⧖ (Rᵃ.s ≠ ')') {
-				⌥ (Rᵃ.type == 'id') id ⬊(Rᵃ.s), ix ⬊(a)
-				a = next(R, a)
+		⌥ (Rᵃ.type ≠ 'id') { // lambda
+			∇ x = next(R, a)
+			if (Rᵃ.s == '(' && Rˣ.s == ')') {
+				Rˣ.s = Rᵃ.s = ''
+				x++
+				if (Rˣ.type == 'space') Rˣ.s = ''
 			}
-			∇t = z ⦙ ⧖ (z <= a) Rᶻ.s = '', z++
-			⌥ (id ↥ ≠ 0) Rᵗ.s = ' '
-			R[t+1].s = id ⫴ (' ')
+		} ⎇ {
+			∇f = Rᵃ.s ⦙ a = next(R, a)
+			⌥ (Rᵃ.s ≟ '(') { 
+				∇ id = [], ix = [], z = a
+				⧖ (Rᵃ.s ≠ ')') {
+					⌥ (Rᵃ.type == 'id') id ⬊(Rᵃ.s), ix ⬊(a)
+					a = next(R, a)
+				}
+				∇ t = z ⦙ ⧖ (z <= a) Rᶻ.s = '', z++
+				⌥ (id ↥ ≠ 0) Rᵗ.s = ' '
+				R[t+1].s = id ⫴ (' ')
+			}
+			i = a
 		}
-		i = a
 	}
 }
 

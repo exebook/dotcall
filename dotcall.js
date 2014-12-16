@@ -31,6 +31,7 @@ module.exports.require = function(f) {
 	eval(compile(b))
 }
 module.exports.convert = dcconvert.dotcallConvert
+module.exports.userSym = dcconvert.userSym
 module.exports.handleExt = function(ext) {
 	if (require.extensions) {
 	   require.extensions[ext] = loadFile

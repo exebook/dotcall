@@ -1,12 +1,23 @@
 module.exports.dotcallConvert = dotcallConvert
-module.exports.dotcallConvert = dotcallConvert
+
 var PREFIX = 'DOTCALL', callNumber = 1, lex = require('./lexer.js')
+
+var userReplace = [{ find:'☛', repl:'with' }]
+
+module.exports.userSym = function (sym, id) {
+	userReplace.push({ find:sym, repl:id })
+}
+
 function getId() {
 	callNumber++
 	return ''+PREFIX+callNumber
 }
 
 function dotcallConvert(s) {
+//console.log(s)
+	var a = userReplace
+	for (var i = 0; i < a.length; i++)
+		dotcallLexerSyms += ' ' + a[i].find
 	var t = '❶❷❸❹❺❻❼❽❾❿', d = '①②③④⑤⑥⑦⑧⑨⑩'
 	var ix = '⁰¹²³⁴⁵⁶⁷⁸⁹ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʱʳˢᵗᵘᵛʷˣʸᶻ',
 		re = '0123456789abcdefghijklmnopqrstuvwxyz'
@@ -15,15 +26,17 @@ function dotcallConvert(s) {
 	for (var i = 0; i < t.length; i++) {
 		var t1 = t[i], d1 = d[i]
 		simpleReplace(R, t1, 'var var'+ i +' = ')
-		simpleReplace(R, d1, 'var'+ i, 'id')
+		varReplace(R, d1, 'var'+ i, 'id')
 	}
 	findVar(R)
 	findLog(R, 'ロ')
-	findLog(R, '#')
+//	findLog(R, '#')
 	findLast(R)
 	findStrEqu(R, '≈', '=')
 	findStrEqu(R, '∼', '==')
 	findStrEqu(R, '≁', '!=')
+	for (var i = 0; i < a.length; i++)
+		simpleReplace(R, a[i].find, a[i].repl, 'id')
 	simpleReplace(R, '⌶', '.split')
 	simpleReplace(R, '⫴', '.join')
 	simpleReplace(R, '⋃', '.slice')
@@ -56,6 +69,7 @@ function dotcallConvert(s) {
 //	simpleReplace(R, '', '')
 	simpleReplace(R, '⊜', '= 0')
 	simpleReplace(R, '⌥', 'if')
+	simpleReplace(R, '⥹', 'else if')
 	simpleReplace(R, '⧗', 'for')
 	simpleReplace(R, '⧖', 'while')
 	simpleReplace(R, '∞', 'while(true)')
@@ -82,10 +96,10 @@ function dotcallConvert(s) {
 	findColon(R, '➮', 'function')
 	var t = joinAdd(R)
 	R = lex.lex(t)
-	// findMacros(R)
+	findMacros(R)
 	findEachs(R, handleEach)
 	findDotCalls(R, handleCall)
-	return lex.join(R,true)
+	return lex.join(R,false)
 }
 
 function trimStr(str) {
@@ -194,7 +208,7 @@ function handleCall(A, i) {
 
 function getLine(A, i) {
 	while (i-- > 0) {
-		if (A[i].type == 'line') {
+		if (A[i].type == 'line' || A[i].s == '{') {
 			while (A[i + 1].type == 'space') i++
 			return i
 		}
@@ -293,14 +307,28 @@ function next(A, i) {
 }
 
 function prev(A, i) {
-	while (A[--i].type == 'space');// i--
-	return i
+	while (--i >= 0) {
+		if (A[i].type != 'space') return i
+	}
 }
 
 function simpleReplace(A, find, replace, type) {
 	for (var i = 0; i < A.length; i++) {
 		if (A[i].s == find) {
 			A[i].s = replace
+			if (type) A[i].type = type
+		}
+	}
+}
+
+function varReplace(A, find, replace, type) {
+	for (var i = 0; i < A.length; i++) {
+		if (A[i].s == find) {
+			var b = next(A, i)
+			var c = prev(A, i)
+			var t = ''
+			if ((A[b].type == 'id') && (!c || (A[c].s != '⬌'))) t='.'
+			A[i].s = replace + t
 			if (type) A[i].type = type
 		}
 	}
@@ -385,9 +413,8 @@ function handleEach(A, i) {
 function findEachs(A, f) {
 	var i = next(A, 0)
 	i = next(A, i)
-	console.log(i)
 	for (; i < A.length; i++) {
-		if (A[i].s == 'each' || A[i].s == '⬌') f(A, i)
+		if (A[i].s == '⬌') f(A, i)
 	}
 }
 
@@ -401,30 +428,30 @@ function findVar(A) {
 	}
 }
 
-//function replaceMacros(id, macro, A, i) {
-	//var level = 0, e = A.length
-	//while (i < e) {
-		//if (A[i].s == id) {
-			//A[i].s = macro
-		//} else if (A[i].s == '{') level++
-		//else if (A[i].s == '}') {
-			//if (level == 0) return
-			//level--
-		//}
-		//i++
-	//}
-//}
-//
-//function findMacros(A) {
-	//var e = A.length
-	//for (var i = 1; i < e; i++) {
-		//if (A[i].s == '≞') {
-			//var q = prev(A, i)
-			//var id = A[q].s, macro = ''
-			//A[q].s = '', A[i].s = ''
-			//while (A[i].type != 'line') { macro += A[i].s; A[i].s = ''; i++ }
-			//replaceMacros(id, macro, A, i)
-		//}
-	//}
-//}
-//
+function replaceMacros(id, macro, A, i) {
+	var level = 0, e = A.length
+	while (i < e) {
+		if (A[i].s == id) {
+			A[i].s = macro
+		} else if (A[i].s == '{') level++
+		else if (A[i].s == '}') {
+			if (level == 0) return
+			level--
+		}
+		i++
+	}
+}
+
+function findMacros(A) {
+	var e = A.length
+	for (var i = 1; i < e; i++) {
+		if (A[i].s == '≞') {
+			var q = prev(A, i)
+			var id = A[q].s, macro = ''
+			A[q].s = '', A[i].s = ''
+			while (A[i].type != 'line') { macro += A[i].s; A[i].s = ''; i++ }
+			replaceMacros(id, macro, A, i)
+		}
+	}
+}
+
