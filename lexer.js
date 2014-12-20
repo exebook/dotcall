@@ -104,8 +104,8 @@ function mainLoop(s) {
 	function cut() { var R = s.substr(i, b-i); i=b; return R }
 }
 
-function join(A, untab) {
+function join(A, x) {
 	var R = []
-	for (var i = 0; i < A.length; i++) R.push(untab?A[i].s.replace('\t', '   '):A[i].s)
+	for (var i = 0; i < A.length; i++) R.push(x == 'untab'?A[i].s.replace('\t', '   '):A[i].s)
 	return R.join('')
 }

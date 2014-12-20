@@ -1,8 +1,9 @@
 #!/v/js/dotcall/yy
 ❶ [1,2,3]
 ロ ① ꕉ, ① ↟
-
+ロ 'REQUIRE LIB'
 ≣('./dotcall').≣('lib.js');
+ロ 'LIB LOADED OK'
 
 ➮ foo (f) {
 	⌛ (➮ () { f(⦿) }, 200)
@@ -27,7 +28,7 @@ i ⬌ A ロ Aⁱ, Aⁱ
 A ⬊ (4)
 A ⬍ ( ➮ { ロ a+100 ⦙ } )
 ロ ∅
-∇ s ≈ '1' if (true) {};
+∇ s ≈ '1'
 ロ 'string assign', s
 ⧗ (∇ i ⊜; i < 10; i++) ⌥ (i ≟ 5) ♻ ⎇ s += i
 ロ s, s ∼ 1012346789, s ≁ abc

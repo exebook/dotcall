@@ -1,13 +1,15 @@
 module.exports.dotcallConvert = dotcallConvert
+module.exports.userSym = userSym
+function userSym(sym, id) {
+	userReplace.push({ find:sym, repl:id })
+}
+
 
 var PREFIX = 'DOTCALL', callNumber = 1, lex = require('./lexer.js')
 
 var userReplace = [{ find:'☛', repl:'with' }]
-
-module.exports.userSym = function (sym, id) {
-	userReplace.push({ find:sym, repl:id })
-}
-
+var ovar = 'ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ'
+for (var i = 0; i < ovar.length; i++) userSym(ovar[i], '_oo_'+i)
 function getId() {
 	callNumber++
 	return ''+PREFIX+callNumber
@@ -23,10 +25,14 @@ function dotcallConvert(s) {
 		re = '0123456789abcdefghijklmnopqrstuvwxyz'
 	var R = lex.lex(s)
 	for (var i = 0; i < ix.length; i++) simpleReplace(R, ix[i], '['+re[i]+']')
-	for (var i = 0; i < t.length; i++) {
-		var t1 = t[i], d1 = d[i]
-		simpleReplace(R, t1, 'var var'+ i +' = ')
-		varReplace(R, d1, 'var'+ i, 'id')
+	{
+		for (var i = 0; i < a.length; i++)
+			simpleReplace(R, a[i].find, a[i].repl, 'id')
+		for (var i = 0; i < t.length; i++) {
+			var t1 = t[i], d1 = d[i]
+			simpleReplace(R, t1, 'var var'+ i +' = ')
+			varReplace(R, d1, 'var'+ i, 'id')
+		}
 	}
 	findVar(R)
 	findLog(R, 'ロ')
@@ -35,8 +41,6 @@ function dotcallConvert(s) {
 	findStrEqu(R, '≈', '=')
 	findStrEqu(R, '∼', '==')
 	findStrEqu(R, '≁', '!=')
-	for (var i = 0; i < a.length; i++)
-		simpleReplace(R, a[i].find, a[i].repl, 'id')
 	simpleReplace(R, '⌶', '.split')
 	simpleReplace(R, '⫴', '.join')
 	simpleReplace(R, '⋃', '.slice')
@@ -48,13 +52,15 @@ function dotcallConvert(s) {
 	simpleReplace(R, '⩪', '.substr')
 	simpleReplace(R, '△', '.charAt')
 	simpleReplace(R, '◬', '.charCodeAt')
-
- 	simpleReplace(R, '≂', '.toString()')
- 	simpleReplace(R, '≀', '.indexOf')
+	
+//TODO: autoparen for toString(XXX) and others
+	autoArg(R, '≂', '.toString')
+// 	simpleReplace(R, '≂', '.toString')
+ 	autoArg(R, '≀', '.indexOf')
  	simpleReplace(R, '≀≀', '.lastIndexOf')
  	simpleReplace(R, '⦙', ';')
  	simpleReplace(R, '★', 'parseInt')
-	simpleReplace(R, '⬠', 'Math.round')
+	autoArg(R, '⬠', 'Math.round')
 	simpleReplace(R, '⍽', 'Math.floor')
 	simpleReplace(R, '♻', 'continue;')
 	simpleReplace(R, '⚂', 'Math.random()')
@@ -155,7 +161,7 @@ function handleEach1(A, i) {
 	}
 	var args = lex.join(A.slice(a, i)).split(',')
 	args[0] = trimStr(args[0]), args[1] = trimStr(args[1])
-	console.log(args)
+//	console.log(args)
 	for (var x = a; x < i; x++) A[x].s = ''
 	A[a-1].s = '(var '+args[0]+' = 0; '+args[0]+' < '+args[1]+'.length; '+args[0]+'++'
 }
@@ -302,8 +308,10 @@ function addTo(X, s) {
 }
 
 function next(A, i) {
-	while (A[++i].type == 'space');// i++
-	return i
+	var e = A.length
+	while (++i < e) {
+		 if (A[i].type != 'space') return i
+	}
 }
 
 function prev(A, i) {
@@ -451,6 +459,34 @@ function findMacros(A) {
 			A[q].s = '', A[i].s = ''
 			while (A[i].type != 'line') { macro += A[i].s; A[i].s = ''; i++ }
 			replaceMacros(id, macro, A, i)
+		}
+	}
+}
+
+//function getGroupRight(A, i) {
+//	var level = 0, e = A.length
+//	while (i < e) {
+//	}
+//}
+
+function autoArg(A, find, repl0) {
+	for (var i = 0; i < A.length; i++) {
+		if (A[i].s == find) {
+			var repl = repl0
+			var a = next(A, i)
+			if (a) {
+			//TODO: ⦙ []❄(➮ { $ (⬠⚂ - 0.5) } )  // sym-nexts are not detected
+				if (A[a].type == 'id') {
+					var R = getNameRight(A, a)
+					A[a].s = '(' + A[a].s
+					A[R[1]-1].s += ')'
+				} else if (A[a].type == 'str' || A[a].type == 'num') {
+					A[a].s = '(' + A[a].s + ')'
+				} else if (A[a].s != '(') {
+					repl += '()'
+				}
+			}
+			A[i].s = repl
 		}
 	}
 }

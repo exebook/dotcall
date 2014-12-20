@@ -10,15 +10,15 @@ function compile(s) {
 }
 
 loadFile = function(module, filename) {
-	var raw, s;
-	raw = fs.readFileSync(filename, 'utf8');
-	s = raw.charCodeAt(0) === 0xFEFF ? raw.substring(1) : raw;
+	var raw, s
+	raw = fs.readFileSync(filename, 'utf8')
+	s = raw.charCodeAt(0) === 0xFEFF ? raw.substring(1) : raw
 	if (s[0] == '#' && s[1] == '!') {
 		var i = s.indexOf('\n')
 		s = s.substr(i)
 	}
-	return module._compile(compile(s), filename);
-};
+	return module._compile(compile(s), filename)
+}
 
 if (require.extensions) {
    require.extensions['.yy'] = loadFile
