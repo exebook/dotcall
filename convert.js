@@ -7,7 +7,14 @@ function userSym(sym, id) {
 
 var PREFIX = 'DOTCALL', callNumber = 1, lex = require('./lexer.js')
 
-var userReplace = [{ find:'☛', repl:'with' }]
+var userReplace = [
+	{ find:'☛', repl:'with' },
+	{ find:'ꗌ', repl:'JSON.stringify' },
+	{ find:'ꖇ', repl:'JSON.parse' },
+	{ find:'⛁', repl:'fs.readFileSync' },
+	{ find:'⛃', repl:'fs.writeFileSync' },
+]
+
 var ovar = 'ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ'
 for (var i = 0; i < ovar.length; i++) userSym(ovar[i], '_oo_'+i)
 function getId() {
@@ -64,7 +71,7 @@ function dotcallConvert(s) {
 	simpleReplace(R, '⍽', 'Math.floor')
 	simpleReplace(R, '♻', 'continue;')
 	simpleReplace(R, '⚂', 'Math.random()')
-	simpleReplace(R, '⚪', 'this')
+	simpleReplace(R, '⚪', 'this') // remove it, use autoDotAfter
 	simpleReplace(R, '⚫', 'this.')
 	simpleReplace(R, '⬤', 'typeof ')
 	simpleReplace(R, '⌿⌚', 'clearInterval')
@@ -79,7 +86,7 @@ function dotcallConvert(s) {
 	simpleReplace(R, '⧗', 'for')
 	simpleReplace(R, '⧖', 'while')
 	simpleReplace(R, '∞', 'while(true)')
-	simpleReplace(R, '⬊', '.push')
+	autoArg(R, '⬊', '.push')
 	simpleReplace(R, '⬈', '.pop()')
 	simpleReplace(R, '⬉', '.shift()')
 	simpleReplace(R, '⬋', '.unshift')
@@ -369,14 +376,18 @@ function findStrEqu(A, sym, js) {
 }
 
 function findLast(A) {
+//TODO: not working in the beginning of file.
+//TODO: maybe replace a.b.c[a.b.c.length - 1] with:
+// getLast(a.b.c)
 	for (var i = 1; i < A.length - 1; i++) {
 		if (A[i].s == '↟') {
-			var a = prev(A, i)
-			A[a].s = '(' + A[a].s
+			var R = getNameLeft(A, i - 1)
+			addTo(A[R.a], '(')
 			A[i].s = '.length - 1)'
 		} else if (A[i].s == 'ꕉ') {
-			var a = prev(A, i)
-			A[i].s = '['+ A[a].s +'.length - 1]'
+			var R = getNameLeft(A, i - 1)
+			var s = lex.join(A.slice(R.a, R.b + 1))
+			A[i].s = '['+s+'.length - 1]'
 		}
 	}
 }

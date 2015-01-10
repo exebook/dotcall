@@ -1,3 +1,4 @@
+#!/v/js/dotcall/yy
 ∇ lex = ≣ ('./lexer.js')
 ➮ μ {
 	var inf = process.argv[3]
