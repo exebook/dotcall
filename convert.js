@@ -151,7 +151,10 @@ function handleFor(A, i) {
 function handleWhile(A, i) {
 	var args = getArgs(A, i + 1)
 	for (var x = args.a; x <= args.b; x++) A[x].s = ''
-	A.splice(args.a, 0, {type:'re',s:';'},{type:'re',s:args.txt},{type:'re',s:';'})
+	A.splice(args.a, 0,
+		{type:'re',s:';'},
+		{type:'re',s:args.txt},
+		{type:'re',s:';'})
 	handleFor(A, i)
 }
 
@@ -170,7 +173,8 @@ function handleEach1(A, i) {
 	args[0] = trimStr(args[0]), args[1] = trimStr(args[1])
 //	console.log(args)
 	for (var x = a; x < i; x++) A[x].s = ''
-	A[a-1].s = '(var '+args[0]+' = 0; '+args[0]+' < '+args[1]+'.length; '+args[0]+'++'
+	A[a-1].s = '(var '+args[0]+' = 0; '
+		+args[0]+' < '+args[1]+'.length; '+args[0]+'++'
 }
 
 Object.defineProperty(Array.prototype, 'last', {
